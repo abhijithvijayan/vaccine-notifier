@@ -178,7 +178,7 @@ void onWifiDisconnect(const WiFiEventStationModeDisconnected &event) {
 }
 
 void setup() {
-    pinMode(BUILTIN_LED, OUTPUT); // Initialize the BUILTIN_LED pin as an output
+    pinMode(LED_BUILTIN, OUTPUT); // Initialize the LED_BUILTIN pin as an output
 
     // initialize serial for debugging
     Serial.begin(SERIAL_DEBUG_PORT);
