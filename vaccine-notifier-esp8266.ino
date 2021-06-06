@@ -7,20 +7,24 @@
  *
  */
 #include <Arduino_JSON.h> // https://github.com/bblanchon/ArduinoJson
+#include <ESP8266HTTPClient.h>
 #include <ESP8266WiFi.h>
 #include <NTPClient.h> // https://github.com/arduino-libraries/NTPClient
 #include <Ticker.h>
 #include <WiFiUdp.h>
 
-#define PING_INTERVAL 10000                                  // 1minute
-const long utcOffsetInSeconds = ((5 * 60 * 60) + (30 * 60)); // UTC+5:30
-
 // Network
-#define WIFI_SSID "........"
-#define WIFI_PASSWORD "........"
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+
+#define TELEGRAM_CHAT_ID 12345
+#define TELEGRAM_BOT_TOKEN ""
 
 // General
 #define SERIAL_DEBUG_PORT 115200
+
+#define PING_INTERVAL 10000                                  // 1minute
+const long utcOffsetInSeconds = ((5 * 60 * 60) + (30 * 60)); // UTC+5:30
 
 WiFiEventHandler wifiConnectHandler;
 WiFiEventHandler wifiDisconnectHandler;
@@ -28,18 +32,93 @@ Ticker wifiReconnectTimer;
 
 // Define NTP Client to get time
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "pool.ntp.org", utcOffsetInSeconds);
+NTPClient timeClient(ntpUDP, "in.pool.ntp.org", utcOffsetInSeconds);
 
 long lastExecutionTime = 0;
 
-unsigned long getTime() {
-    timeClient.update();
+String httpGETRequest(String requestURL) {
+    Serial.println(String(requestURL));
+    std::unique_ptr<BearSSL::WiFiClientSecure> client(
+        new BearSSL::WiFiClientSecure);
+    client->setInsecure();
 
-    return timeClient.getEpochTime();
+    HTTPClient https;
+    String payload = "{}";
+
+    Serial.print("[HTTPS] begin...\n");
+    if (https.begin(*client, requestURL)) {
+        Serial.print("[HTTPS] GET...\n");
+        // start connection and send HTTP header
+        int httpCode = https.GET();
+
+        // httpCode will be negative on error
+        if (httpCode > 0) {
+            // HTTP header has been send and Server response header has been
+            // handled
+            Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+
+            // file found at server
+            if (httpCode == HTTP_CODE_OK ||
+                httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+                payload = https.getString();
+                Serial.println(payload);
+            }
+        } else {
+            Serial.printf("[HTTPS] GET... failed, error: %s\n",
+                https.errorToString(httpCode).c_str());
+        }
+    }
+
+    // Free resources
+    https.end();
+
+    return payload;
+}
+
+void httpPOSTRequest(String requestURL) {
+    Serial.println(String(requestURL));
+
+    std::unique_ptr<BearSSL::WiFiClientSecure> client(
+        new BearSSL::WiFiClientSecure);
+    client->setInsecure();
+
+    HTTPClient https;
+    String payload = "{}";
+
+    Serial.print("[HTTPS] begin...\n");
+    if (https.begin(*client, requestURL)) {
+        https.addHeader("Content-Type", "application/json");
+
+        Serial.print("[HTTPS] POST...\n");
+        // start connection and send HTTP header
+        int httpCode =
+            https.POST(String("{\"chat_id\":\"") + String(TELEGRAM_CHAT_ID) +
+                       String("\",\"text\":\"hello world\"}"));
+
+        // httpCode will be negative on error
+        if (httpCode > 0) {
+            // HTTP header has been send and Server response header has been
+            // handled
+            Serial.printf("[HTTPS] POST... code: %d\n", httpCode);
+
+            // file found at server
+            if (httpCode == HTTP_CODE_OK ||
+                httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+                payload = https.getString();
+                Serial.println(payload);
+            }
+        } else {
+            Serial.printf("[HTTPS] POST... failed, error: %s\n",
+                https.errorToString(httpCode).c_str());
+        }
+    }
+
+    // Free resources
+    https.end();
 }
 
 String getCurrentDate() {
-    unsigned long epochTime = getTime();
+    unsigned long epochTime = timeClient.getEpochTime();
     // Get a time structure
     /**
      *  Get a time structure
@@ -53,8 +132,22 @@ String getCurrentDate() {
      */
     struct tm *ptm = gmtime((time_t *)&epochTime);
     int day        = ptm->tm_mday;
-    int month      = ptm->tm_mon + 1;
+    int month      = ptm->tm_mon + 1; // tm_mon is month from 0..11
     int year       = ptm->tm_year + 1900;
+
+    Serial.print("Epoch Time: ");
+    Serial.println(epochTime);
+
+    String formattedTime = timeClient.getFormattedTime();
+    Serial.print("Formatted Time: ");
+    Serial.println(formattedTime);
+
+    Serial.print("Current day: ");
+    Serial.println(day);
+    Serial.print("Current month: ");
+    Serial.println(month);
+    Serial.print("Current year: ");
+    Serial.println(year);
 
     return String(day) + '-' + String(month) + '-' + String(year);
 }
@@ -109,7 +202,10 @@ void loop() {
     long now = millis();
 
     if (now - lastExecutionTime > PING_INTERVAL) {
+        timeClient.update();
+
         lastExecutionTime = now;
-        Serial.println(getCurrentDate());
+        String today      = getCurrentDate();
+        Serial.println(today);
     }
 }
