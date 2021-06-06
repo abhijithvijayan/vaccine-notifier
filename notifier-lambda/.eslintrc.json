@@ -4,6 +4,6 @@
     "@abhijithvijayan/eslint-config/node"
   ],
   "rules": {
-    //
+    "no-console": "off"
   }
 }

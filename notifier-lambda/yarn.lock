@@ -23,6 +23,11 @@
   resolved "https://registry.yarnpkg.com/@abhijithvijayan/eslint-config/-/eslint-config-2.6.3.tgz#3f560c99ce4e9631a404d956c4396835e1e52aa7"
   integrity sha512-njS8R0Q4FAtealxY48CmL8Ms58xPPqTZAcabB+92mogmfVkkHOlgb8kHfhW1PZpbe9xhHkKR5HwrkdMPNbMoiA==
 
+"@abhijithvijayan/ts-utils@^0.11.0":
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/@abhijithvijayan/ts-utils/-/ts-utils-0.11.0.tgz#ee288f56d01f7131dcf6d8521184ec3043059841"
+  integrity sha512-+AN7yYjBGSWAYZQiIEybIRwwyURNwceJCh+OApzPvJ8RLieVmI+xdbA8sFPUAFrsYUAjyuG7JMbDa41b/QYu8w==
+
 "@babel/code-frame@7.12.11":
   version "7.12.11"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.12.11.tgz#f4ad435aa263db935b8f10f2c552d23fb716a63f"

@@ -35,5 +35,9 @@
     "eslint-plugin-react-hooks": "^4.1.2",
     "prettier": "^2.1.2",
     "serverless": "^2.44.0"
+  },
+  "dependencies": {
+    "@abhijithvijayan/ts-utils": "^0.11.0",
+    "node-fetch": "^2.6.1"
   }
 }
