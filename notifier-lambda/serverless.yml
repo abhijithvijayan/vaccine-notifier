@@ -2,13 +2,10 @@ service: notifier-lambda
 
 # Serverless will load all env vars in `.env` in 3.0.0+
 # https://www.serverless.com/framework/docs/environment-variables/
-useDotenv: false
+useDotenv: true
 
 variablesResolutionMode: 20210326
 configValidationMode: error
-
-custom:
-  dotenvVars: ${file(configs.js)}
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -20,8 +17,6 @@ provider:
   lambdaHashingVersion: 20201221
   stage: dev
   region: ap-south-1
-  # Note: avoid loading secrets by accident (e.g. AWS_SECRET_ACCESS_KEY)
-  environment: ${file(configs.js)}
 
 # you can add statements to the Lambda function's IAM Role here
 #  iamRoleStatements:
@@ -57,7 +52,7 @@ functions:
     memorySize: 128
     description: Get Current Date
     environment:
-      FOO: ${self:custom.dotenvVars.FOO}
+      FOO: ${env:FOO}
     events:
       - httpApi:
           path: /api/v1/current_date
