@@ -47,7 +47,7 @@ provider:
 #    - include-me-dir/**
 
 functions:
-  hello:
+  current_date:
     handler: api/notifier.getCurrentDate
     memorySize: 128
     description: Get Current Date
