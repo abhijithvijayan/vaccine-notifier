@@ -4,6 +4,9 @@ service: notifier-lambda
 # https://www.serverless.com/framework/docs/environment-variables/
 useDotenv: false
 
+variablesResolutionMode: 20210326
+configValidationMode: error
+
 custom:
   dotenvVars: ${file(configs.js)}
 
