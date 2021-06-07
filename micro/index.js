@@ -9,6 +9,7 @@ const CENTERS_REGEX = /<([0-9]+),([a-z0-9A-Z\s,._-]+)>/g;
 
 const ageGroups = {
   BELOW_45: 18,
+  BETWEEN_40_AND_45: 40,
   AND_ABOVE_45: 45,
 };
 
@@ -19,7 +20,7 @@ const {
   VACCINATION_CENTERS = '',
   TELEGRAM_BOT_TOKEN = '',
   SLACK_WEBHOOK_URL = '',
-  AGE_CATEGORY = `${ageGroups.BELOW_45},${ageGroups.AND_ABOVE_45}`,
+  AGE_CATEGORY = `${ageGroups.BELOW_45},${ageGroups.BETWEEN_40_AND_45},${ageGroups.AND_ABOVE_45}`,
   DISTRICT_CODE = '',
 } = process.env;
 
