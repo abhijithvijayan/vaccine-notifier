@@ -139,7 +139,7 @@ void setupLocalTime() {
     // see https://github.com/esp8266/Arduino/issues/4637
     time_t now;
     now = time(nullptr); // if there's no time, this will have a value of 28800;
-                         // Thu Jan  1 08:00:00 1970
+                         // Thu Jan  1 00:00:00 1970
     Serial.print("Initial time:");
     Serial.println(now);
     Serial.println(ctime(&now));
@@ -147,15 +147,15 @@ void setupLocalTime() {
     int myTimezone     = +5.5;
     int dst            = 0;
     int SecondsPerHour = 3600;
-    int MAX_TIME_RETRY = 60;
+    int MAX_TIME_RETRY = 15;
     int i              = 0;
 
     // it is unlikely that the time is already set since we have no battery;
-    // if no time is avalable, then try to set time from the network
+    // if no time is available, then try to set time from the network
     if (now <= 1500000000) {
         // try to set network time via ntp packets
         configTime(0, 0, "0.in.pool.ntp.org",
-            "pool.ntp.org"); // see
+            "pool.ntp.org"); // @see:
                              // https://github.com/esp8266/Arduino/issues/4749#issuecomment-390822737
 
         // Starting in 2007, most of the United States and Canada observe DST
@@ -165,7 +165,7 @@ void setupLocalTime() {
             1); // see
                 // https://users.pja.edu.pl/~jms/qnx/help/watcom/clibref/global_data.html
         //                     | month 3, second sunday at 2:00AM
-        //                                    | Month 11 - firsst Sunday, at
+        //                                    | Month 11 - first Sunday, at
         //                                    2:00am
         // Mm.n.d
         //   The dth day(0 <= d <= 6) of week n of month m of the year(1 <= n <=
@@ -180,7 +180,7 @@ void setupLocalTime() {
         while (!time(nullptr)) {
             Serial.print(".");
             delay(1000);
-            i++;
+            i+=1;
             if (i > MAX_TIME_RETRY) {
                 Serial.println(
                     "Gave up waiting for time(nullptr) to have a valid value.");
@@ -197,9 +197,10 @@ void setupLocalTime() {
     while (now <= 1500000000) {
         Serial.print(".");
         delay(1000); // allow a few seconds to connect to network time.
-        i++;
+        i+=1;
         now = time(nullptr);
         if (i > MAX_TIME_RETRY) {
+            Serial.println("");
             Serial.println("Gave up waiting for network time(nullptr) to have "
                            "a valid value.");
             break;
@@ -245,7 +246,7 @@ void setupLocalTime() {
     }
 
     now = time(nullptr);
-    Serial.println("Final time:");
+    Serial.print("Final time:");
     Serial.println(now);
     Serial.println(ctime(&now));
 }
