@@ -32,8 +32,9 @@ module.exports.getCurrentDate = async () => {
   };
 };
 
-module.exports.notifyIfAvailable = async () => {
-  const slots = [];
+module.exports.notifyIfAvailable = async (event, context, callback) => {
+  const requestBody = JSON.parse(event.body);
+  // const slots = [];
 
   const telegramURL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
   const body = ({format = false} = {}) => {
@@ -44,7 +45,7 @@ module.exports.notifyIfAvailable = async () => {
           }).format(
             adjustForTimezone(new Date(), timezoneOffset)
           )},\n\nAvailable Centers:  ${JSON.stringify(
-      slots,
+      requestBody,
       null,
       format ? 2 : 0
     )}`;
@@ -82,7 +83,9 @@ module.exports.notifyIfAvailable = async () => {
     console.log('[ERROR]: Failed to send notification');
   }
 
-  return {
+  const response = {
     statusCode: 200,
   };
+
+  callback(null, response);
 };
