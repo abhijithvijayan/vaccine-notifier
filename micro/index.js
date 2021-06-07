@@ -4,11 +4,12 @@ const fetch = require('node-fetch');
 const {app} = require('deta');
 
 const {
-  CENTERS_REGEX,
   ageGroups,
   getCurrentDate,
   adjustForTimezone,
   timezoneOffset,
+  getFirstAvailableSession,
+  getCenters,
 } = require('../shared');
 
 // Note: Rate Limit is 100 Calls Per 5 Minute Per IP
@@ -27,31 +28,8 @@ function getAgeCategoryFromEnv() {
   return AGE_CATEGORY.split(',').filter(Boolean).map(Number);
 }
 
-function getCentersFromEnv() {
-  const matches = [...VACCINATION_CENTERS.matchAll(CENTERS_REGEX)];
-
-  return matches.reduce((acc, {1: centerId, 2: centerName}) => {
-    acc[centerId] = centerName.trim();
-
-    return acc;
-  }, {});
-}
-
 // These id's will later be converted to numbers
-const whiteListedCenters = getCentersFromEnv();
-
-// collect for each group, returns an array
-function getFirstAvailableSession(sessions) {
-  const ageCategory = getAgeCategoryFromEnv();
-
-  return ageCategory
-    .map((group) => {
-      return sessions.find(({available_capacity_dose1, min_age_limit}) => {
-        return available_capacity_dose1 > 0 && group === min_age_limit;
-      });
-    })
-    .filter(Boolean);
-}
+const whiteListedCenters = getCenters(VACCINATION_CENTERS);
 
 function getCenterName(cId) {
   const centerId = `${cId}`;
@@ -92,6 +70,7 @@ async function fetchSlots() {
   const slots = [];
 
   try {
+    const watchingAgeGroups = getAgeCategoryFromEnv();
     const whiteListedCentersIds = Object.keys(whiteListedCenters).map(Number); // conversion to number
     const response = await Promise.allSettled(
       whiteListedCentersIds.map((centerId) => {
@@ -116,7 +95,10 @@ async function fetchSlots() {
 
           console.log('[INFO]: Fetched Center Data');
           const centerSessions = get(centerData, 'sessions', []);
-          const availableSlots = getFirstAvailableSession(centerSessions);
+          const availableSlots = getFirstAvailableSession(
+            watchingAgeGroups,
+            centerSessions
+          );
           if (!isEmpty(availableSlots)) {
             const centerName = getCenterName(centerData.center_id);
 
@@ -158,7 +140,10 @@ async function fetchSlots() {
               if (foundCentersIndex !== -1) {
                 const centerData = allCenters[foundCentersIndex];
                 const centerSessions = get(centerData, 'sessions', []);
-                const availableSlots = getFirstAvailableSession(centerSessions);
+                const availableSlots = getFirstAvailableSession(
+                  watchingAgeGroups,
+                  centerSessions
+                );
                 if (!isEmpty(availableSlots)) {
                   const centerName = getCenterName(centerData.center_id);
 

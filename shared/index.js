@@ -24,10 +24,32 @@ function getCurrentDate() {
   return `${dd}-${mm}-${yyyy}`;
 }
 
+function getFirstAvailableSession(groups, sessions) {
+  return groups
+    .map((group) => {
+      return sessions.find(({available_capacity_dose1, min_age_limit}) => {
+        return available_capacity_dose1 > 0 && group === min_age_limit;
+      });
+    })
+    .filter(Boolean);
+}
+
+function getCenters(centers) {
+  const matches = [...centers.matchAll(CENTERS_REGEX)];
+
+  return matches.reduce((acc, {1: centerId, 2: centerName}) => {
+    acc[centerId] = centerName.trim();
+
+    return acc;
+  }, {});
+}
+
 module.exports = {
   ageGroups,
   adjustForTimezone,
   timezoneOffset,
   CENTERS_REGEX,
-  getCurrentDate
+  getCurrentDate,
+  getFirstAvailableSession,
+  getCenters,
 }
