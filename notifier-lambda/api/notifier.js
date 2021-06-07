@@ -1,6 +1,8 @@
 const {get} = require('@abhijithvijayan/ts-utils');
 const fetch = require('node-fetch');
 
+const timezoneOffset = 5.5; // GMT+5:30
+
 const {
   TELEGRAM_CHAT_ID = '',
   TELEGRAM_BOT_TOKEN = '',
@@ -15,7 +17,7 @@ function adjustForTimezone(date, offset = 0) {
 }
 
 function currentDate() {
-  const today = adjustForTimezone(new Date(), 5.5);
+  const today = adjustForTimezone(new Date(), timezoneOffset);
   const dd = today.getDate();
   const mm = today.getMonth() + 1;
   const yyyy = today.getFullYear();
@@ -40,7 +42,7 @@ module.exports.notifyIfAvailable = async () => {
             dateStyle: 'full',
             timeStyle: 'long',
           }).format(
-            adjustForTimezone(new Date(), 5.5)
+            adjustForTimezone(new Date(), timezoneOffset)
           )},\n\nAvailable Centers:  ${JSON.stringify(
       slots,
       null,
