@@ -86,8 +86,6 @@ String httpGETRequest(String requestURL) {
 }
 
 void httpPOSTRequest(String requestURL, String data) {
-    Serial.println(String(requestURL));
-
     std::unique_ptr<BearSSL::WiFiClientSecure> client(
         new BearSSL::WiFiClientSecure);
     client->setInsecure();
@@ -322,7 +320,7 @@ void loop() {
     if (now - lastExecutionTime > PING_INTERVAL) {
         lastExecutionTime = now;
 
-        String today   = getCurrentDate();
+        String today     = getCurrentDate();
         int totalCenters = sizeof(centers) / sizeof(int);
         for (int i = 0; i < totalCenters; i += 1) {
             String response = httpGETRequest(getCenterURL(centers[i], today));
