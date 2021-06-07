@@ -1,5 +1,5 @@
 {
-  "name": "notifier-lambda",
+  "name": "@abhijithvijayan/notifier-lambda",
   "version": "1.0.0",
   "description": "Notifier Lambda",
   "private": true,

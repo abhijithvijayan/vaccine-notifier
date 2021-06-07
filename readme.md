@@ -1,4 +1,4 @@
-# vaccine-notifier-esp8266
+# vaccine-notifier
 
 #### Fetch the certificate store from Mozilla and upload it to your ESP’s SPIFFS
 

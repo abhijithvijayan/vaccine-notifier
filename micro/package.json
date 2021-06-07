@@ -1,0 +1,39 @@
+{
+  "name": "@abhijithvijayan/vaccine-notifier",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": "12.14.1"
+  },
+  "license": "MIT",
+  "scripts": {
+    "deploy": "deta deploy",
+    "set:cron": "deta cron set '1 minute'",
+    "remove:cron": "deta cron remove",
+    "lint": "eslint . --ext .js,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.ts,.tsx --fix"
+  },
+  "dependencies": {
+    "@abhijithvijayan/ts-utils": "^0.11.0",
+    "deta": "0.0.8",
+    "dotenv": "^10.0.0",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@abhijithvijayan/eslint-config": "^2.6.3",
+    "@abhijithvijayan/eslint-config-airbnb": "^1.0.2",
+    "@babel/core": "^7.14.3",
+    "@babel/eslint-parser": "^7.14.4",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "eslint": "^7.27.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "prettier": "^2.3.0"
+  }
+}
