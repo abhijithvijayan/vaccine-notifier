@@ -21,16 +21,14 @@
 #define WIFI_SSID ""
 #define WIFI_PASSWORD ""
 
-#define TELEGRAM_CHAT_ID 12345
-#define TELEGRAM_BOT_TOKEN ""
-
 // General
 #define SERIAL_DEBUG_PORT 115200
 
-#define PING_INTERVAL 10000 // 1minute
+#define PING_INTERVAL 60000 // 1minute
 
 const int timezoneOffset      = 5.5;
 const long utcOffsetInSeconds = (timezoneOffset * 60 * 60); // UTC+5:30
+const int centers[] = {12345, 67890}; // array of center id's
 
 // A single, global CertStore which can be used by all
 // connections.  Needs to stay live the entire time any of
@@ -87,7 +85,7 @@ String httpGETRequest(String requestURL) {
     return payload;
 }
 
-void httpPOSTRequest(String requestURL) {
+void httpPOSTRequest(String requestURL, String data) {
     Serial.println(String(requestURL));
 
     std::unique_ptr<BearSSL::WiFiClientSecure> client(
@@ -103,9 +101,7 @@ void httpPOSTRequest(String requestURL) {
 
         Serial.print("[HTTPS] POST...\n");
         // start connection and send HTTP header
-        int httpCode =
-            https.POST(String("{\"chat_id\":\"") + String(TELEGRAM_CHAT_ID) +
-                       String("\",\"text\":\"hello world\"}"));
+        int httpCode = https.POST(data);
 
         // httpCode will be negative on error
         if (httpCode > 0) {
@@ -130,11 +126,21 @@ void httpPOSTRequest(String requestURL) {
 }
 
 String getCurrentDate() {
-    String requestURL =
-        "https://nj9ky893a2.execute-api.ap-south-1.amazonaws.com/api/v1/"
-        "current_date";
+    String requestURL = "https://example.com/api/v1/current_date";
 
     return httpGETRequest(requestURL);
+}
+
+String getCenterURL(int centerId, String date) {
+    return String("https://cdn-api.co-vin.in/api/v2/appointment/sessions/"
+                  "public/calendarByCenter?center_id=") +
+           centerId + String("&date=") + date;
+}
+
+void triggerNotification(String payload) {
+    String requestURL = "https://example.com/api/v1/notify_if_available";
+
+    return httpPOSTRequest(requestURL, payload);
 }
 
 void setupLocalTime() {
@@ -315,9 +321,16 @@ void loop() {
     long now = millis();
     if (now - lastExecutionTime > PING_INTERVAL) {
         lastExecutionTime = now;
-        timeClient.update();
 
-        String today = getCurrentDate();
-        Serial.println(today);
-   }
+        String today   = getCurrentDate();
+        int totalCenters = sizeof(centers) / sizeof(int);
+        for (int i = 0; i < totalCenters; i += 1) {
+            String response = httpGETRequest(getCenterURL(centers[i], today));
+            if (!response.equals("{}")) {
+                triggerNotification(response);
+
+                delay(1000);
+            }
+        }
+    }
 }
