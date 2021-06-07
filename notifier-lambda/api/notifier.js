@@ -42,7 +42,7 @@ function getCenterName(cId) {
 
 module.exports.notifyIfAvailable = async (event, context, callback) => {
   const telegramURL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-  const r = JSON.parse(event.body || {});
+  const r = {value: JSON.parse(event.body || '{}')};
   const slots = [];
 
   const errorMessage = get(r, 'value.message');
