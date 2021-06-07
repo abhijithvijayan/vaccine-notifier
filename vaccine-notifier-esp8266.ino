@@ -27,8 +27,10 @@
 // General
 #define SERIAL_DEBUG_PORT 115200
 
-#define PING_INTERVAL 10000                                  // 1minute
-const long utcOffsetInSeconds = ((5 * 60 * 60) + (30 * 60)); // UTC+5:30
+#define PING_INTERVAL 10000 // 1minute
+
+const int timezoneOffset      = 5.5;
+const long utcOffsetInSeconds = (timezoneOffset * 60 * 60); // UTC+5:30
 
 // A single, global CertStore which can be used by all
 // connections.  Needs to stay live the entire time any of
@@ -144,7 +146,6 @@ void setupLocalTime() {
     Serial.println(now);
     Serial.println(ctime(&now));
 
-    int myTimezone     = +5.5;
     int dst            = 0;
     int SecondsPerHour = 3600;
     int MAX_TIME_RETRY = 15;
@@ -154,7 +155,7 @@ void setupLocalTime() {
     // if no time is available, then try to set time from the network
     if (now <= 1500000000) {
         // try to set network time via ntp packets
-        configTime(0, 0, "0.in.pool.ntp.org",
+        configTime(0, 0, "in.pool.ntp.org",
             "pool.ntp.org"); // @see:
                              // https://github.com/esp8266/Arduino/issues/4749#issuecomment-390822737
 
@@ -180,7 +181,7 @@ void setupLocalTime() {
         while (!time(nullptr)) {
             Serial.print(".");
             delay(1000);
-            i+=1;
+            i += 1;
             if (i > MAX_TIME_RETRY) {
                 Serial.println(
                     "Gave up waiting for time(nullptr) to have a valid value.");
@@ -197,7 +198,7 @@ void setupLocalTime() {
     while (now <= 1500000000) {
         Serial.print(".");
         delay(1000); // allow a few seconds to connect to network time.
-        i+=1;
+        i += 1;
         now = time(nullptr);
         if (i > MAX_TIME_RETRY) {
             Serial.println("");
@@ -238,7 +239,7 @@ void setupLocalTime() {
         //	int tz_minuteswest;     /* minutes west of Greenwich */
         //	int tz_dsttime;         /* type of DST correction */
         //};
-        timezone tz = {myTimezone * 60, 0};
+        timezone tz = {timezoneOffset * 60, 0};
 
         // int settimeofday(const struct timeval *tv, const struct timezone
         // *tz);
