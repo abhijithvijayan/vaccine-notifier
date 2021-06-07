@@ -1,5 +1,12 @@
-const {get} = require('@abhijithvijayan/ts-utils');
+const {isNullOrUndefined, get, isEmpty} = require('@abhijithvijayan/ts-utils');
 const fetch = require('node-fetch');
+
+const {
+  getFirstAvailableSession,
+  extractAgeGroups,
+  ageGroups,
+  getCenters,
+} = require('../../shared');
 
 const timezoneOffset = 5.5; // GMT+5:30
 
@@ -7,7 +14,11 @@ const {
   TELEGRAM_CHAT_ID = '',
   TELEGRAM_BOT_TOKEN = '',
   SLACK_WEBHOOK_URL = '',
+  VACCINATION_CENTERS = '',
+  AGE_CATEGORY = `${ageGroups.BELOW_45},${ageGroups.BETWEEN_40_AND_45},${ageGroups.AND_ABOVE_45}`,
 } = process.env;
+
+const whiteListedCenters = getCenters(VACCINATION_CENTERS);
 
 function adjustForTimezone(date, offset = 0) {
   const timeOffsetInMS = offset * 60 * 60 * 1000;
@@ -32,11 +43,60 @@ module.exports.getCurrentDate = async () => {
   };
 };
 
-module.exports.notifyIfAvailable = async (event, context, callback) => {
-  const requestBody = JSON.parse(event.body);
-  // const slots = [];
+function getCenterName(cId) {
+  const centerId = `${cId}`;
+  const centerName = whiteListedCenters[centerId];
+  if (isNullOrUndefined(centerName)) {
+    return centerId;
+  }
 
+  return centerName;
+}
+
+module.exports.notifyIfAvailable = async (event, context, callback) => {
   const telegramURL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+  const r = JSON.parse(event.body);
+  const slots = [];
+
+  const errorMessage = get(r, 'value.message');
+  if (errorMessage) {
+    callback(
+      new Error('[ERROR]: Something went wrong with Center API', {
+        err: errorMessage,
+      })
+    );
+
+    return;
+  }
+
+  const centerData = get(r, 'value.centers', {});
+  if (isEmpty(centerData)) {
+    callback(
+      new Error(
+        '[ERROR]: Something went wrong with Center API. No data received.',
+        {
+          err: errorMessage,
+        }
+      )
+    );
+
+    return;
+  }
+
+  const centerSessions = get(centerData, 'sessions', []);
+  const watchingAgeGroups = extractAgeGroups(AGE_CATEGORY);
+  const availableSlots = getFirstAvailableSession(
+    watchingAgeGroups,
+    centerSessions
+  );
+  if (!isEmpty(availableSlots)) {
+    const centerName = getCenterName(centerData.center_id);
+
+    slots.push({
+      [centerName.toUpperCase()]: availableSlots,
+    });
+  }
+
   const body = ({format = false} = {}) => {
     return `
           Timestamp: ${new Intl.DateTimeFormat('en-GB', {
@@ -45,7 +105,7 @@ module.exports.notifyIfAvailable = async (event, context, callback) => {
           }).format(
             adjustForTimezone(new Date(), timezoneOffset)
           )},\n\nAvailable Centers:  ${JSON.stringify(
-      requestBody,
+      slots,
       null,
       format ? 2 : 0
     )}`;
