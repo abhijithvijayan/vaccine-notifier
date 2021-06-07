@@ -44,6 +44,10 @@ function getCenters(centers) {
   }, {});
 }
 
+function extractAgeGroups(groups) {
+  return groups.split(',').filter(Boolean).map(Number);
+}
+
 module.exports = {
   ageGroups,
   adjustForTimezone,
@@ -52,4 +56,5 @@ module.exports = {
   getCurrentDate,
   getFirstAvailableSession,
   getCenters,
+  extractAgeGroups
 }

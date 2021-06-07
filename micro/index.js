@@ -10,6 +10,7 @@ const {
   timezoneOffset,
   getFirstAvailableSession,
   getCenters,
+  extractAgeGroups,
 } = require('../shared');
 
 // Note: Rate Limit is 100 Calls Per 5 Minute Per IP
@@ -23,10 +24,6 @@ const {
   AGE_CATEGORY = `${ageGroups.BELOW_45},${ageGroups.BETWEEN_40_AND_45},${ageGroups.AND_ABOVE_45}`,
   DISTRICT_CODE = '',
 } = process.env;
-
-function getAgeCategoryFromEnv() {
-  return AGE_CATEGORY.split(',').filter(Boolean).map(Number);
-}
 
 // These id's will later be converted to numbers
 const whiteListedCenters = getCenters(VACCINATION_CENTERS);
@@ -70,7 +67,7 @@ async function fetchSlots() {
   const slots = [];
 
   try {
-    const watchingAgeGroups = getAgeCategoryFromEnv();
+    const watchingAgeGroups = extractAgeGroups(AGE_CATEGORY);
     const whiteListedCentersIds = Object.keys(whiteListedCenters).map(Number); // conversion to number
     const response = await Promise.allSettled(
       whiteListedCentersIds.map((centerId) => {
