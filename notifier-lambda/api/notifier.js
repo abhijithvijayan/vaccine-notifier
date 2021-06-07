@@ -98,36 +98,38 @@ module.exports.notifyIfAvailable = async (event, context, callback) => {
     )}`;
   };
 
-  const [tgResponse, slackResponse] = await Promise.allSettled([
-    fetch(telegramURL, {
-      method: 'POST',
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: body({format: true}),
+  if (!isEmpty(slots)) {
+    const [tgResponse, slackResponse] = await Promise.allSettled([
+      fetch(telegramURL, {
+        method: 'POST',
+        body: JSON.stringify({
+          chat_id: TELEGRAM_CHAT_ID,
+          text: body({format: true}),
+        }),
+        headers: {'Content-Type': 'application/json'},
       }),
-      headers: {'Content-Type': 'application/json'},
-    }),
-    fetch(SLACK_WEBHOOK_URL, {
-      method: 'post',
-      body: JSON.stringify({
-        text: body({format: false}),
+      fetch(SLACK_WEBHOOK_URL, {
+        method: 'post',
+        body: JSON.stringify({
+          text: body({format: false}),
+        }),
+        headers: {'Content-Type': 'application/json'},
       }),
-      headers: {'Content-Type': 'application/json'},
-    }),
-  ]);
+    ]);
 
-  if (
-    tgResponse.status === 'fulfilled' ||
-    slackResponse.status === 'fulfilled'
-  ) {
     if (
-      get(tgResponse, 'value.ok', false) ||
-      get(slackResponse, 'value.ok', false)
+      tgResponse.status === 'fulfilled' ||
+      slackResponse.status === 'fulfilled'
     ) {
-      console.log('[SUCCESS]: Notification sent.');
+      if (
+        get(tgResponse, 'value.ok', false) ||
+        get(slackResponse, 'value.ok', false)
+      ) {
+        console.log('[SUCCESS]: Notification sent.');
+      }
+    } else {
+      console.log('[ERROR]: Failed to send notification');
     }
-  } else {
-    console.log('[ERROR]: Failed to send notification');
   }
 
   const response = {
