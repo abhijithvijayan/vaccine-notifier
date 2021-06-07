@@ -8,7 +8,8 @@ const {
   getCurrentDate,
   ageGroups,
   getCenters,
-} = require('../../shared');
+  // Note: this path is intentional as symlinks resolve to `notifier-lambda/shared/`
+} = require('../shared'); // eslint-disable-line node/no-missing-require, import/no-unresolved
 
 const timezoneOffset = 5.5; // GMT+5:30
 
