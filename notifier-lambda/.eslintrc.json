@@ -4,6 +4,8 @@
     "@abhijithvijayan/eslint-config/node"
   ],
   "rules": {
-    "no-console": "off"
+    "no-console": "off",
+    "camelcase": "off",
+    "node/no-unpublished-require": "off"
   }
 }
