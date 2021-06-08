@@ -1,11 +1,19 @@
 {
-  "name": "@abhijithvijayan/vaccine-notifier",
+  "name": "@abhijithvijayan/vaccine-notifier-micro",
   "version": "1.0.0",
+  "description": "Notifier Micro",
   "main": "index.js",
+  "private": true,
+  "repository": "https://github.com/abhijithvijayan/vaccine-notifier.git",
+  "author": {
+    "name": "abhijithvijayan",
+    "email": "email@abhijithvijayan.in",
+    "url": "https://abhijithvijayan.in"
+  },
+  "license": "MIT",
   "engines": {
     "node": "12.14.1"
   },
-  "license": "MIT",
   "scripts": {
     "deploy": "deta deploy",
     "set:cron": "deta cron set '1 minute'",

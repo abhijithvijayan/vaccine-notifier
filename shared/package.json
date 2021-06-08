@@ -1,0 +1,17 @@
+{
+  "name": "@abhijithvijayan/vaccine-notifier-utils",
+  "version": "1.0.0",
+  "description": "Notifier Utils",
+  "main": "index.js",
+  "private": true,
+  "repository": "https://github.com/abhijithvijayan/vaccine-notifier.git",
+  "author": {
+    "name": "abhijithvijayan",
+    "email": "email@abhijithvijayan.in",
+    "url": "https://abhijithvijayan.in"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "12.14.1"
+  }
+}
