@@ -165,7 +165,7 @@ async function fetchSlots() {
       const telegramURL = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
       const body = ({format = false} = {}) => {
         return `
-          Timestamp: ${new Intl.DateTimeFormat('en-GB', {
+          Initiator:"Micro",\nTimestamp: ${new Intl.DateTimeFormat('en-GB', {
             dateStyle: 'full',
             timeStyle: 'long',
           }).format(

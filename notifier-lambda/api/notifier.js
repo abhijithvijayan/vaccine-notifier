@@ -86,7 +86,7 @@ module.exports.notifyIfAvailable = async (event, context, callback) => {
 
   const body = ({format = false} = {}) => {
     return `
-          Timestamp: ${new Intl.DateTimeFormat('en-GB', {
+          Initiator:"Lambda",\nTimestamp: ${new Intl.DateTimeFormat('en-GB', {
             dateStyle: 'full',
             timeStyle: 'long',
           }).format(
