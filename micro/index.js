@@ -2,16 +2,15 @@ require('dotenv').config({path: `${__dirname}/.env`});
 const {get, isNullOrUndefined, isEmpty} = require('@abhijithvijayan/ts-utils');
 const fetch = require('node-fetch');
 const {app} = require('deta');
-
 const {
-  ageGroups,
-  getCurrentDate,
-  adjustForTimezone,
-  timezoneOffset,
   getFirstAvailableSession,
-  getCenters,
+  adjustForTimezone,
   extractAgeGroups,
-} = require('../shared');
+  timezoneOffset,
+  getCurrentDate,
+  ageGroups,
+  getCenters,
+} = require('@abhijithvijayan/vaccine-notifier-utils');
 
 // Note: Rate Limit is 100 Calls Per 5 Minute Per IP
 

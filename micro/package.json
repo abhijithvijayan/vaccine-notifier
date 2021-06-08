@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@abhijithvijayan/ts-utils": "^0.11.0",
+    "@abhijithvijayan/vaccine-notifier-utils": "^1.0.0",
     "deta": "0.0.8",
     "dotenv": "^10.0.0",
     "node-fetch": "^2.6.1"
