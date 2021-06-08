@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Notifier Utils",
   "main": "index.js",
-  "private": true,
   "repository": "https://github.com/abhijithvijayan/vaccine-notifier.git",
   "author": {
     "name": "abhijithvijayan",
