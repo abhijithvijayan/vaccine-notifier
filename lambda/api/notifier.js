@@ -1,15 +1,13 @@
 const {isNullOrUndefined, get, isEmpty} = require('@abhijithvijayan/ts-utils');
 const fetch = require('node-fetch');
-
 const {
   getFirstAvailableSession,
   adjustForTimezone,
   extractAgeGroups,
   getCurrentDate,
-  ageGroups,
   getCenters,
-  // Note: this path is intentional as symlinks resolve to `notifier-lambda/shared/`
-} = require('../shared'); // eslint-disable-line node/no-missing-require, import/no-unresolved
+  ageGroups,
+} = require('@abhijithvijayan/vaccine-notifier-utils');
 
 const timezoneOffset = 5.5; // GMT+5:30
 

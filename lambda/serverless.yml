@@ -46,14 +46,6 @@ provider:
 #    - include-me.js
 #    - include-me-dir/**
 
-plugins:
-  - serverless-package-common
-
-custom:
-  packageCommon:
-    common:
-      - '../shared'
-
 functions:
   current_date:
     handler: api/notifier.getCurrentDate
