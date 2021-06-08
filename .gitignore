@@ -91,3 +91,4 @@ modules.xml
 node_modules
 .serverless
 .env
+yarn-error.log
