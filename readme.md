@@ -19,8 +19,8 @@
 
 ## Micro Service CRON
 
-> Checkout `readme.md` in `micro/` folder
+> Checkout [readme.md](https://github.com/abhijithvijayan/vaccine-notifier/blob/main/micro/readme.md) in [micro/](https://github.com/abhijithvijayan/vaccine-notifier/tree/main/micro) folder
 
 ## LAMBDA Functions
 
-> Checkout `readme.md` in `lambda/` folder
+> Checkout [readme.md](https://github.com/abhijithvijayan/vaccine-notifier/blob/main/lambda/readme.md) in [lambda/](https://github.com/abhijithvijayan/vaccine-notifier/tree/main/lambda) folder
